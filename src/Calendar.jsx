@@ -16,22 +16,12 @@ import {
 } from './shared/propTypes';
 import { between } from './shared/utils';
 
-const defaultMinDate = new Date();
-defaultMinDate.setFullYear(1, 0, 1);
-defaultMinDate.setHours(0, 0, 0, 0);
+const defaultMinDate = new Date('0001-01-01');
 const defaultMaxDate = new Date(8.64e15);
 
 const baseClassName = 'react-calendar';
 const allViews = ['century', 'decade', 'year', 'month'];
 const allValueTypes = [...allViews.slice(1), 'day'];
-
-function toDate(value) {
-  if (value instanceof Date) {
-    return value;
-  }
-
-  return new Date(value);
-}
 
 /**
  * Returns views array with disallowed values cut off.
@@ -73,13 +63,13 @@ function getValue(value, index) {
     return null;
   }
 
-  const rawValue = Array.isArray(value) && value.length === 2 ? value[index] : value;
+  const rawValue = value instanceof Array && value.length === 2 ? value[index] : value;
 
   if (!rawValue) {
     return null;
   }
 
-  const valueDate = toDate(rawValue);
+  const valueDate = new Date(rawValue);
 
   if (isNaN(valueDate.getTime())) {
     throw new Error(`Invalid date: ${value}`);
@@ -110,7 +100,7 @@ const getDetailValueTo = (args) => getDetailValue(args, 1);
 const getDetailValueArray = (args) => {
   const { value } = args;
 
-  if (Array.isArray(value)) {
+  if (value instanceof Array) {
     return value;
   }
 
@@ -523,7 +513,6 @@ export default class Calendar extends Component {
       }
       case 'month': {
         const {
-          formatDay,
           formatLongDate,
           formatShortWeekday,
           onClickWeekNumber,
@@ -537,7 +526,6 @@ export default class Calendar extends Component {
         return (
           <MonthView
             calendarType={calendarType}
-            formatDay={formatDay}
             formatLongDate={formatLongDate}
             formatShortWeekday={formatShortWeekday}
             onClickWeekNumber={onClickWeekNumber}
@@ -666,7 +654,6 @@ Calendar.propTypes = {
   defaultActiveStartDate: isActiveStartDate,
   defaultValue: isLooseValue,
   defaultView: isView,
-  formatDay: PropTypes.func,
   formatLongDate: PropTypes.func,
   formatMonth: PropTypes.func,
   formatMonthYear: PropTypes.func,

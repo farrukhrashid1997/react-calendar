@@ -63,27 +63,21 @@ export default function Navigation({
   })();
 
   const prev2ButtonDisabled = shouldShowPrevNext2Buttons && (() => {
-    if (previousActiveStartDate2.getFullYear() < 0) {
+    if (previousActiveStartDate2.getFullYear() < 0 || (minDate && minDate === activeStartDate)) {
       return true;
     }
-    const previousActiveEndDate = getEndPrevious2(view, activeStartDate);
-    return minDate && minDate >= previousActiveEndDate;
   })();
 
   const nextButtonDisabled = maxDate && maxDate <= nextActiveStartDate;
 
-  const next2ButtonDisabled = (
-    shouldShowPrevNext2Buttons
-    && maxDate
-    && maxDate <= nextActiveStartDate2
-  );
+  const next2ButtonDisabled = shouldShowPrevNext2Buttons && maxDate && maxDate === activeStartDate;
 
   function onClickPrevious() {
     setActiveStartDate(previousActiveStartDate);
   }
 
   function onClickPrevious2() {
-    setActiveStartDate(previousActiveStartDate2);
+    setActiveStartDate(minDate && minDate >= getEndPrevious2(view, activeStartDate) ? minDate : previousActiveStartDate2);
   }
 
   function onClickNext() {
@@ -91,7 +85,7 @@ export default function Navigation({
   }
 
   function onClickNext2() {
-    setActiveStartDate(nextActiveStartDate2);
+    setActiveStartDate(maxDate && maxDate <= nextActiveStartDate2 ? maxDate : nextActiveStartDate2);
   }
 
   function renderLabel(date) {
